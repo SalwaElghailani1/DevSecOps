@@ -93,6 +93,7 @@ Un webhook GitHub a été configuré pour notifier Jenkins à chaque push sur la
 - Contenu du Jenkinsfile
 - Intégration de SonarQube dans Jenkins
 - Exécution du pipeline Jenkins
+  ![alt text](images/2.png)
   ![Jenkins Dashboard](images/2.png)
 - Résultats SonarQube depuis Jenkins
   ![Résultats SonarQube](images/4.png)
