@@ -93,11 +93,11 @@ Un webhook GitHub a été configuré pour notifier Jenkins à chaque push sur la
 - Contenu du Jenkinsfile
 - Intégration de SonarQube dans Jenkins
 - Exécution du pipeline Jenkins
-  ![Jenkins Dashboard](images/2.png)
+  ![Jenkins Dashboard](static/images/2.png)
 - Résultats SonarQube depuis Jenkins
-  ![Résultats SonarQube](images/4.png)
+  ![Résultats SonarQube](static/images/4.png)
 ---
-
+E
 ## Conclusion
 Ce TP nous a permis de mettre en œuvre une approche DevSecOps en utilisant deux outils d’intégration continue : GitHub Actions et Jenkins.  
 L’automatisation de l’analyse de code avec SonarQube a montré son importance pour détecter rapidement les vulnérabilités et améliorer la qualité du code.
