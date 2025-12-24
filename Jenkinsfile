@@ -23,6 +23,19 @@ node {
             '''
         }
     }
+     stage('Dependency-Check') {
+            steps {
+                dir('maven') { 
+                    // Run Maven commands 
+                        sh 'mvn org.owasp:dependency-check-maven:check'
+                    }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'target/dependency-check-report.html', allowEmptyArchive: true
+                }
+            }
+        }
 
     stage('Quality Gate') {
         timeout(time: 1, unit: 'HOURS') {
