@@ -10,19 +10,14 @@ node {
           mvn clean verify
         '''
     }
+
     stage('Dependency-Check') {
-                steps {
-                    dir('maven') {
-                        // Run Maven commands
-                            sh 'mvn org.owasp:dependency-check-maven:check'
-                        }
-                }
-                post {
-                    always {
-                        archiveArtifacts artifacts: 'target/dependency-check-report.html', allowEmptyArchive: true
-                    }
-                }
-            }
+        dir('maven') {
+            sh 'mvn org.owasp:dependency-check-maven:check'
+        }
+        archiveArtifacts artifacts: 'target/dependency-check-report.html', allowEmptyArchive: true
+    }
+
     stage('SonarCloud Analysis') {
         withSonarQubeEnv('SonarCloud') { 
             sh '''
