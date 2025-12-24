@@ -17,7 +17,7 @@ node {
               echo "=== Starting SonarCloud Analysis ==="
               mvn sonar:sonar \
                 -Dsonar.projectKey=salwa_devsecops-jenkins \
-                -Dsonar.organization=DevSecOps \
+                -Dsonar.organization=salwa \
                 -Dsonar.host.url=https://sonarcloud.io \
                 -Dsonar.login=$SONAR_TOKEN
             '''
