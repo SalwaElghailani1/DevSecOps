@@ -1,74 +1,44 @@
-pipeline {
-    agent any
-
-    environment {
-        SONAR_TOKEN = credentials('sonarcloud-token') // Assure-toi d'avoir configuré ce token dans Jenkins Credentials
+node {
+    stage('SCM') {
+        checkout scm
     }
-
-    stages {
-        stage('SCM Checkout') {
-            steps {
-                checkout scm
-            }
+    
+    stage('Build & Test') {
+        sh '''
+          java -version
+          mvn -version
+          mvn clean verify
+        '''
+    }
+    stage('Dependency-Check') {
+        steps {
+             dir('maven') {
+                // Run Maven commands
+                 sh 'mvn org.owasp:dependency-check-maven:check'
+             }
         }
-
-        stage('Build & Test') {
-            steps {
-                sh '''
-                    echo "=== Java Version ==="
-                    java -version
-                    echo "=== Maven Version ==="
-                    mvn -version
-                    echo "=== Build & Test ==="
-                    mvn clean verify
-                '''
-            }
-        }
-
-        stage('Dependency-Check') {
-            steps {
-                sh '''
-                    echo "=== OWASP Dependency-Check ==="
-                    mvn org.owasp:dependency-check-maven:check
-                '''
-            }
-            post {
-                always {
-                    archiveArtifacts artifacts: 'target/dependency-check-report.html', allowEmptyArchive: true
-                }
-            }
-        }
-
-        stage('SonarCloud Analysis') {
-            steps {
-                withSonarQubeEnv('SonarCloud') {
-                    sh '''
-                        echo "=== SonarCloud Analysis ==="
-                        mvn sonar:sonar \
-                          -Dsonar.projectKey=salwa_devsecops-jenkins \
-                          -Dsonar.organization=salwa \
-                          -Dsonar.host.url=https://sonarcloud.io \
-                          -Dsonar.login=$SONAR_TOKEN
-                    '''
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
+         post {
+             always {
+                 archiveArtifacts artifacts: 'target/dependency-check-report.html', allowEmptyArchive: true
+                 }
+             }
+    }
+    stage('SonarCloud Analysis') {
+        withSonarQubeEnv('SonarCloud') { 
+            sh '''
+              echo "=== Starting SonarCloud Analysis ==="
+              mvn sonar:sonar \
+                -Dsonar.projectKey=salwa_devsecops-jenkins \
+                -Dsonar.organization=salwa \
+                -Dsonar.host.url=https://sonarcloud.io \
+                -Dsonar.login=$SONAR_TOKEN
+            '''
         }
     }
 
-    post {
-        success {
-            echo "Pipeline terminé avec succès ✅"
-        }
-        failure {
-            echo "Pipeline échoué ❌"
+    stage('Quality Gate') {
+        timeout(time: 1, unit: 'HOURS') {
+            waitForQualityGate abortPipeline: true
         }
     }
 }
