@@ -70,4 +70,27 @@ pipeline {
             echo "Pipeline échoué ❌"
         }
     }
+    stage('Trivy Security Scan') {
+    steps {
+        sh '''
+        echo "=== Trivy Scan Docker Image ==="
+        docker run --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v $WORKSPACE/reports:/reports \
+          aquasec/trivy image \
+          --severity HIGH,CRITICAL \
+          --format json \
+          --output /reports/trivy-report.json \
+          myusername/myimage:latest
+        '''
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: 'reports/trivy-report.json', allowEmptyArchive: true
+            echo "Trivy scan finished. Report saved in reports/trivy-report.json"
+        }
+    }
 }
+
+}
+
